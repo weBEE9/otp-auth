@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: opt-auth
+      POSTGRES_USER: opt-auth
+      POSTGRES_PASSWORD: opt-auth
+  
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  pg-data:
+  redis-data:
