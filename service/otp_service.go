@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/weBEE9/opt-auth-backend/repository"
 )
@@ -15,9 +16,31 @@ func NewOTPService(repository repository.OTPRepository) OTPService {
 }
 
 func (s *optServiceRedis) GenOTP(ctx context.Context, phoneNumber string) (string, error) {
-	return s.Repository.GenOTP(ctx, phoneNumber)
+	otp, err := s.Repository.GenOTP(ctx, phoneNumber)
+	if err != nil {
+		if errors.Is(err, repository.ErrorOTPAlreadyExists) {
+			return "", repository.ErrorOTPAlreadyExists
+		}
+
+		return "", err
+	}
+
+	return otp, nil
 }
 
 func (s *optServiceRedis) VerifyOTP(ctx context.Context, phoneNumber, otp string) error {
-	return s.Repository.VerifyOTP(ctx, phoneNumber, otp)
+	err := s.Repository.VerifyOTP(ctx, phoneNumber, otp)
+	if err != nil {
+		if errors.Is(err, repository.ErrorOTPNotFound) {
+			return repository.ErrorOTPNotFound
+		}
+
+		if errors.Is(err, repository.ErrorOTPMismatch) {
+			return repository.ErrorOTPMismatch
+		}
+
+		return err
+	}
+
+	return nil
 }
