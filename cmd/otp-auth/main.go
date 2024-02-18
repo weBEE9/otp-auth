@@ -15,6 +15,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/weBEE9/opt-auth-backend/config"
 	"github.com/weBEE9/opt-auth-backend/handler"
+	"github.com/weBEE9/opt-auth-backend/middleware"
 	"github.com/weBEE9/opt-auth-backend/repository"
 	"github.com/weBEE9/opt-auth-backend/service"
 )
@@ -38,9 +39,11 @@ func run(ctx context.Context) error {
 	otpService := service.NewOTPService(otpRepo)
 	otpHandler := handler.NewOTPHandler(otpService)
 
+	rateLimiter := middleware.NewRateLimiter()
+
 	mux := http.NewServeMux()
-	mux.Handle("POST /api/v1/otp", otpHandler.GenOTP())
-	mux.Handle("POST /api/v1/otp/verify", otpHandler.VerifyOTP())
+	mux.Handle("POST /api/v1/otp", rateLimiter.Limit(otpHandler.GenOTP()))
+	mux.Handle("POST /api/v1/otp/verify", rateLimiter.Limit(otpHandler.VerifyOTP()))
 
 	httpServer := &http.Server{
 		Addr:    ":8080",
