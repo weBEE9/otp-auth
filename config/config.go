@@ -28,8 +28,8 @@ type database struct {
 }
 
 type ratelimiter struct {
-	LimitRate  int `envconfig:"APP_RATE_LIMIT_RATE" default:"5"`
-	BucketSize int `envconfig:"APP_RATE_BUCKET_SIZE" default:"5"`
+	LimitRate  int `envconfig:"APP_RATELIMITER_RATE_PER_MIN" default:"5"`
+	BucketSize int `envconfig:"APP_RATELIMITER_BUCKET_SIZE" default:"5"`
 }
 
 func (db database) ConnStr() string {
