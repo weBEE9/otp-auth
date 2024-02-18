@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Database database
-	Redis    redis
+	Database    database
+	Redis       redis
+	Ratelimiter ratelimiter
 }
 
 type redis struct {
@@ -24,6 +25,11 @@ type database struct {
 	Username  string `envconfig:"APP_DB_USERNAME" default:"opt-auth"`
 	Password  string `envconfig:"APP_DB_PASSWORD" default:"opt-auth"`
 	EnableSSL bool   `envconfig:"APP_DB_ENABLE_SSL" default:"false"`
+}
+
+type ratelimiter struct {
+	LimitRate  int `envconfig:"APP_RATE_LIMIT_RATE" default:"5"`
+	BucketSize int `envconfig:"APP_RATE_BUCKET_SIZE" default:"5"`
 }
 
 func (db database) ConnStr() string {

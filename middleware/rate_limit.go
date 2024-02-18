@@ -18,9 +18,8 @@ type RateLimiter struct {
 	bucketSize int
 }
 
-func NewRateLimiter() *RateLimiter {
-	limiRate := rate.Every(1 * time.Minute)
-	bucketSize := 1
+func NewRateLimiter(limitRate, bucketSize int) *RateLimiter {
+	limiRate := rate.Every(time.Duration(limitRate) * time.Minute)
 
 	return &RateLimiter{
 		limiter:    make(map[string]*rate.Limiter),

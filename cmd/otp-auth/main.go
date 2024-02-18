@@ -39,7 +39,7 @@ func run(ctx context.Context) error {
 	otpService := service.NewOTPService(otpRepo)
 	otpHandler := handler.NewOTPHandler(otpService)
 
-	rateLimiter := middleware.NewRateLimiter()
+	rateLimiter := middleware.NewRateLimiter(cfg.Ratelimiter.LimitRate, cfg.Ratelimiter.BucketSize)
 
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/v1/otp", rateLimiter.Limit(otpHandler.GenOTP()))
