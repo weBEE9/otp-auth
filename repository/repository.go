@@ -4,6 +4,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/weBEE9/opt-auth-backend/model"
 )
@@ -12,6 +13,7 @@ import (
 type OTPRepository interface {
 	GenOTP(ctx context.Context, phoneNumber string) (string, error)
 	VerifyOTP(ctx context.Context, phoneNumber, otp string) error
+	TTL(ctx context.Context, phoneNumber string) (time.Duration, error)
 }
 
 type UserRepository interface {

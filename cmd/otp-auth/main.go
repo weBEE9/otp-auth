@@ -39,11 +39,14 @@ func run(ctx context.Context) error {
 	otpService := service.NewOTPService(otpRepo)
 	otpHandler := handler.NewOTPHandler(otpService)
 
-	rateLimiter := middleware.NewRateLimiter(cfg.Ratelimiter.LimitRate, cfg.Ratelimiter.BucketSize)
+	apiRateLimiter := middleware.NewRateLimiter(cfg.Ratelimiter.LimitRate, cfg.Ratelimiter.BucketSize)
 
 	mux := http.NewServeMux()
-	mux.Handle("POST /api/v1/otp", rateLimiter.Limit(otpHandler.GenOTP()))
-	mux.Handle("POST /api/v1/otp/verify", rateLimiter.Limit(otpHandler.VerifyOTP()))
+	mux.Handle("POST /api/v1/otp", apiRateLimiter.Limit(otpHandler.GenOTP()))
+	mux.Handle("POST /api/v1/otp/verify", apiRateLimiter.Limit(otpHandler.VerifyOTP()))
+
+	secondRateLimiter := middleware.NewRateLimiter(60, 1)
+	mux.Handle("GET /api/v1/otp/ttl", secondRateLimiter.Limit(otpHandler.GetOTPTTL()))
 
 	httpServer := &http.Server{
 		Addr:    ":8080",

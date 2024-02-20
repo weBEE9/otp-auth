@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/weBEE9/opt-auth-backend/repository"
 )
@@ -43,4 +44,17 @@ func (s *optServiceRedis) VerifyOTP(ctx context.Context, phoneNumber, otp string
 	}
 
 	return nil
+}
+
+func (s *optServiceRedis) TTL(ctx context.Context, phoneNumber string) (time.Duration, error) {
+	ttl, err := s.Repository.TTL(ctx, phoneNumber)
+	if err != nil {
+		if errors.Is(err, repository.ErrorOTPNotFound) {
+			return 0, ErrorOTPNotFound
+		}
+
+		return 0, err
+	}
+
+	return ttl, nil
 }

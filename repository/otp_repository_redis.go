@@ -82,3 +82,23 @@ func (r *otpRepositoryRedis) VerifyOTP(ctx context.Context, phoneNumber, otp str
 
 	return nil
 }
+
+func (r *otpRepositoryRedis) TTL(ctx context.Context, phoneNumber string) (time.Duration, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	cacheKey := getCahceKey(phoneNumber)
+	ttl, err := r.RedisClient.TTL(ctx, cacheKey).Result()
+	if err != nil {
+		return 0, err
+	}
+
+	switch ttl {
+	case time.Duration(-1):
+		return 0, ErrorOTPWillNotExpire
+	case time.Duration(-2):
+		return 0, ErrorOTPNotFound
+	default:
+		return ttl, nil
+	}
+}
