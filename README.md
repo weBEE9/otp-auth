@@ -32,4 +32,4 @@ to configure the middleware.
 See `.env.example` file for more information.
 
 ## TODOs
-- [ ] TTL(time to live) of OTP
+- [x] TTL(time to live) of OTP
