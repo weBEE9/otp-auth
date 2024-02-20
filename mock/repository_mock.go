@@ -12,6 +12,7 @@ package mock
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	gomock "go.uber.org/mock/gomock"
 )
@@ -52,6 +53,21 @@ func (m *MockOTPRepository) GenOTP(arg0 context.Context, arg1 string) (string, e
 func (mr *MockOTPRepositoryMockRecorder) GenOTP(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenOTP", reflect.TypeOf((*MockOTPRepository)(nil).GenOTP), arg0, arg1)
+}
+
+// TTL mocks base method.
+func (m *MockOTPRepository) TTL(arg0 context.Context, arg1 string) (time.Duration, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TTL", arg0, arg1)
+	ret0, _ := ret[0].(time.Duration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// TTL indicates an expected call of TTL.
+func (mr *MockOTPRepositoryMockRecorder) TTL(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TTL", reflect.TypeOf((*MockOTPRepository)(nil).TTL), arg0, arg1)
 }
 
 // VerifyOTP mocks base method.
