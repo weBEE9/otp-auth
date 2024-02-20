@@ -7,6 +7,9 @@ all: build
 build:
 	go build -v -o bin/app cmd/otp-auth/main.go
 
+generate:
+	go generate ./...
+
 test:
 	@echo $(SOURCE)
 	go test -v -tags="json1" ./...
