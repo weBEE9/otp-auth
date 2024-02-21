@@ -23,7 +23,7 @@ type otpRepositoryRedis struct {
 	RedisClient *redis.Client
 }
 
-func getCahceKey(phoneNumber string) string {
+func getCacheKey(phoneNumber string) string {
 	return fmt.Sprintf("%s:%s", otpCacheKeyPrefix, phoneNumber)
 }
 
@@ -38,7 +38,7 @@ func (r *otpRepositoryRedis) GenOTP(ctx context.Context, phoneNumber string) (st
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	cacheKey := getCahceKey(phoneNumber)
+	cacheKey := getCacheKey(phoneNumber)
 
 	_, err := r.RedisClient.Get(ctx, cacheKey).Result()
 	if err == redis.Nil {
@@ -65,7 +65,7 @@ func (r *otpRepositoryRedis) VerifyOTP(ctx context.Context, phoneNumber, otp str
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	cacheKey := getCahceKey(phoneNumber)
+	cacheKey := getCacheKey(phoneNumber)
 
 	storedOTP, err := r.RedisClient.Get(ctx, cacheKey).Result()
 	if err == redis.Nil {
@@ -87,7 +87,7 @@ func (r *otpRepositoryRedis) TTL(ctx context.Context, phoneNumber string) (time.
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	cacheKey := getCahceKey(phoneNumber)
+	cacheKey := getCacheKey(phoneNumber)
 	ttl, err := r.RedisClient.TTL(ctx, cacheKey).Result()
 	if err != nil {
 		return 0, err

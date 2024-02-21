@@ -14,7 +14,7 @@ func TestOTPRepositoryRedis_GenOTP(t *testing.T) {
 	ctx := context.Background()
 
 	phoneNumber := "1234567890"
-	cacheKey := getCahceKey(phoneNumber)
+	cacheKey := getCacheKey(phoneNumber)
 	t.Run("generate OTP", func(t *testing.T) {
 		mock.ExpectGet(cacheKey).RedisNil()
 		mock.Regexp().ExpectSet(cacheKey, "[0-9]{4}", fiveMinutes).SetVal("OK")
@@ -25,7 +25,7 @@ func TestOTPRepositoryRedis_GenOTP(t *testing.T) {
 		require.NotEmpty(t, otp)
 	})
 
-	t.Run("generate OTP with same phone number before key exipre, should get error", func(t *testing.T) {
+	t.Run("generate OTP with same phone number before key expire, should get error", func(t *testing.T) {
 		mock.Regexp().ExpectGet(cacheKey).SetVal("[0-9]{4}")
 
 		repo := NewRedisOtpRepository(db)
@@ -46,7 +46,7 @@ func TestOTPRepositoryRedis_VerifyOTP(t *testing.T) {
 	t.Run("OTP with not found with phone number", func(t *testing.T) {
 		phoneNumber := "1234567890"
 		otp := "1234"
-		cacheKey := getCahceKey(phoneNumber)
+		cacheKey := getCacheKey(phoneNumber)
 
 		mock.ExpectGet(cacheKey).RedisNil()
 
@@ -58,7 +58,7 @@ func TestOTPRepositoryRedis_VerifyOTP(t *testing.T) {
 	t.Run("OTP mismatch with phone number", func(t *testing.T) {
 		phoneNumber := "1234567890"
 		otp := "1234"
-		cacheKey := getCahceKey(phoneNumber)
+		cacheKey := getCacheKey(phoneNumber)
 		// set key first
 		db.Set(ctx, cacheKey, otp, fiveMinutes)
 
@@ -69,10 +69,10 @@ func TestOTPRepositoryRedis_VerifyOTP(t *testing.T) {
 		require.ErrorIs(t, err, ErrorOTPMismatch)
 	})
 
-	t.Run("OTP verifyied with phone number", func(t *testing.T) {
+	t.Run("OTP verified with phone number", func(t *testing.T) {
 		phoneNumber := "1234567890"
 		otp := "1234"
-		cacheKey := getCahceKey(phoneNumber)
+		cacheKey := getCacheKey(phoneNumber)
 		// set key first
 		db.Set(ctx, cacheKey, otp, fiveMinutes)
 
