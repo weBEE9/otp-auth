@@ -130,22 +130,22 @@ func (h *OTPHandler) VerifyOTP() http.Handler {
 	)
 }
 
-type getOTPTTLRequest struct {
+type getTTLRequest struct {
 	PhoneNumber string `json:"phone_number"`
 }
 
-type getOTPTTLResponse struct {
+type getTTLResponse struct {
 	Code    int    `json:"code"`
 	TTL     string `json:"ttl,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 
-func (h *OTPHandler) GetOTPTTL() http.Handler {
+func (h *OTPHandler) GetTTL() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			req, err := decode[getOTPTTLRequest](r)
+			req, err := decode[getTTLRequest](r)
 			if err != nil {
-				encode[getOTPTTLResponse](w, r, http.StatusInternalServerError, getOTPTTLResponse{
+				encode[getTTLResponse](w, r, http.StatusInternalServerError, getTTLResponse{
 					Code:    http.StatusInternalServerError,
 					Message: "failed to decode request: " + err.Error(),
 				})
@@ -160,7 +160,7 @@ func (h *OTPHandler) GetOTPTTL() http.Handler {
 					code = http.StatusBadRequest
 				}
 
-				encode[getOTPTTLResponse](w, r, code, getOTPTTLResponse{
+				encode[getTTLResponse](w, r, code, getTTLResponse{
 					Code:    code,
 					Message: err.Error(),
 				})
@@ -168,16 +168,16 @@ func (h *OTPHandler) GetOTPTTL() http.Handler {
 				return
 			}
 
-			if err := encode[getOTPTTLResponse](
+			if err := encode[getTTLResponse](
 				w,
 				r,
 				http.StatusOK,
-				getOTPTTLResponse{
+				getTTLResponse{
 					Code: http.StatusOK,
 					TTL:  ttl.String(),
 				},
 			); err != nil {
-				encode[getOTPTTLResponse](w, r, http.StatusInternalServerError, getOTPTTLResponse{
+				encode[getTTLResponse](w, r, http.StatusInternalServerError, getTTLResponse{
 					Code:    http.StatusInternalServerError,
 					Message: "failed to encode response: " + err.Error(),
 				})

@@ -46,7 +46,7 @@ func run(ctx context.Context) error {
 	mux.Handle("POST /api/v1/otp/verify", apiRateLimiter.Limit(otpHandler.VerifyOTP()))
 
 	secondRateLimiter := middleware.NewRateLimiter(60, 1)
-	mux.Handle("GET /api/v1/otp/ttl", secondRateLimiter.Limit(otpHandler.GetOTPTTL()))
+	mux.Handle("GET /api/v1/otp/ttl", secondRateLimiter.Limit(otpHandler.GetTTL()))
 
 	httpServer := &http.Server{
 		Addr:    ":8080",
