@@ -32,4 +32,5 @@ to configure the middleware.
 See `.env.example` file for more information.
 
 ## TODOs
-- [x] TTL(time to live) of OTP
+- [x] TTL(time to live) of OTPd
+- [ ] Send OTP through SMS(Short message service) instead

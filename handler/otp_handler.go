@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/weBEE9/opt-auth-backend/service"
@@ -22,7 +23,6 @@ type genOTPRequest struct {
 type genOTPResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message,omitempty"`
-	OTP     string `json:"otp,omitempty"`
 }
 
 func (h *OTPHandler) GenOTP() http.Handler {
@@ -52,13 +52,22 @@ func (h *OTPHandler) GenOTP() http.Handler {
 				return
 			}
 
+			if err := sendOTPToPhoneNumber(req.PhoneNumber, otp); err != nil {
+				encode[genOTPResponse](w, r, http.StatusInternalServerError, genOTPResponse{
+					Code:    http.StatusInternalServerError,
+					Message: "failed to send OTP: " + err.Error(),
+				})
+
+				return
+			}
+
 			if err := encode[genOTPResponse](
 				w,
 				r,
 				http.StatusOK,
 				genOTPResponse{
-					Code: http.StatusOK,
-					OTP:  otp,
+					Code:    http.StatusOK,
+					Message: fmt.Sprintf("OTP has sent to: [%s]", req.PhoneNumber),
 				},
 			); err != nil {
 				encode[genOTPResponse](w, r, http.StatusInternalServerError, genOTPResponse{
@@ -186,4 +195,9 @@ func (h *OTPHandler) GetTTL() http.Handler {
 			}
 		},
 	)
+}
+
+func sendOTPToPhoneNumber(phoneNumber, otp string) error {
+	// send OTP to phoneNumber
+	return nil
 }

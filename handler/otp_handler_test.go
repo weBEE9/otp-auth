@@ -42,7 +42,6 @@ func TestOTPHandler_GenOTP(t *testing.T) {
 		json.Unmarshal(recorder.Body.Bytes(), &resp)
 
 		require.Equal(t, http.StatusOK, resp.Code)
-		require.NotEmpty(t, resp.OTP)
 	})
 
 	t.Run("OTP already exist", func(t *testing.T) {
